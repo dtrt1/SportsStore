@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using Moq;
@@ -33,15 +34,14 @@ namespace SportsStore.WebUI.Infrastructure
         {
             kernel.Bind<IProductRepository>().To<EFProductRepository>();
 
-            //Mock<IProductRepository> mock = new Mock<IProductRepository>();
-            //mock.Setup(m => m.Products).Returns(new List<Product>
-            //{
-            //    new Product { Name = "Football", Price = 25 },
-            //    new Product { Name = "Surf board", Price = 179 },
-            //    new Product { Name = "Running shoes", Price = 95 }
-            //});
+            EmailSettings emailSettings = new EmailSettings
+            {
+                WriteAsFile = bool.Parse(ConfigurationManager
+                .AppSettings["Email.WriteAsFile"] ?? "false")
+            };
 
-            //kernel.Bind<IProductRepository>().ToConstant(mock.Object);
+            kernel.Bind<IOrderProcessor>().To<EmailOrderProcessor>()
+                .WithConstructorArgument("settings", emailSettings);
         }
     }
 }

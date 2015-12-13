@@ -12,7 +12,7 @@ namespace SportsStore.WebUI.Controllers
     public class ProductController : Controller
     {
         private IProductRepository repository;
-        public int PageSize = 4;
+        public int PageSize = 3;
 
         public ProductController(IProductRepository productRepository)
         {
@@ -30,7 +30,9 @@ namespace SportsStore.WebUI.Controllers
                 PagingInfo = new PagingInfo {
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
-                    TotalItems = repository.Products.Count()
+                    TotalItems = category == null ?
+                        repository.Products.Count() :
+                        repository.Products.Where(e => e.Category == category).Count()
                 },
                 CurrentCategory = category
             };
